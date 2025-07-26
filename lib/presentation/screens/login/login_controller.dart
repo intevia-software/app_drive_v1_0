@@ -9,21 +9,32 @@ class LoginController extends ChangeNotifier {
   bool isLoading = false;
   String? error;
 
-  Future<void> login(String email, String password) async {
-      print('login() called'); // 👈 test de déclenchement
-  isLoading = true;
-  error = null;
-  notifyListeners();
+  Future<void> login(String email, String password, BuildContext context) async {
 
-  try {
-    final data = await loginUser(email, password);
-    print("Login success: $data");
-  } catch (e) {
-    error = e.toString();
-    print("Login error: $error"); // 👈 log d'erreur
-  } finally {
-    isLoading = false;
+    print("➡️ Début login"); // 
+    isLoading = true;
+    error = null;
     notifyListeners();
-  }
+
+    try {
+      final user = await loginUser(email, password);
+      if (user.isAdmin) {
+        print("🔐 Redirection admin");
+
+        Navigator.pushReplacementNamed(context, '/admin');
+      } else {
+        error = "Accès refusé : rôle non autorisé.";
+        print("⛔ Rôle non admin");
+
+      }
+    } catch (e, stack) {
+      error = 'Erreur de connexion : $e';
+      print("❌ Erreur login: $e");
+      print(stack); // Pour voir la source exacte
+
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }

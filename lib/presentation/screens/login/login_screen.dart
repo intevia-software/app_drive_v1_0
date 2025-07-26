@@ -112,7 +112,9 @@ class _LoginScreen extends State<LoginScreen> {
                       decoration: InputDecoration(
                         labelText: 'Mot de passe',
                         hintText: 'Entrez votre mot de passe',
-                        prefixIcon: const Icon(Icons.lock_outline_rounded,color: Colors.grey),
+                        prefixIcon: const Icon(Icons.lock_outline_rounded,
+                        
+                        color: Colors.grey),
                         border: const OutlineInputBorder(),
                         hintStyle: TextStyle(color: Colors.grey),
                         focusedBorder: OutlineInputBorder(
@@ -174,6 +176,21 @@ class _LoginScreen extends State<LoginScreen> {
                               ),
                             ),
                           ),
+                          onPressed: () async {
+                                try {
+                                  final user = await controller.login(
+                                    _emailController.text.trim(),
+                                    _passwordController.text.trim(),
+                                    context,
+                                  );
+                                  
+                                  // Naviguer vers une autre page, afficher message, etc.
+                                } catch (e) {
+                                  print('Erreur login: $e');
+                                  // Afficher snackbar ou message d’erreur à l’utilisateur
+                                }
+                              },
+
                           child: const Padding(
                             padding: EdgeInsets.all(10.0),
                             child: Text(
@@ -185,10 +202,7 @@ class _LoginScreen extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          onPressed: () => controller.login(
-                            _emailController.text,
-                            _passwordController.text,
-                          ),
+                        
                         ),
                       ),
 
@@ -226,6 +240,8 @@ class _LoginScreen extends State<LoginScreen> {
                           onPressed: () {
                             // Action pour créer un compte
                             //controller.goToRegister();
+                            Navigator.pushNamed(context, '/register');
+
                           },
                         ),
                       ),
