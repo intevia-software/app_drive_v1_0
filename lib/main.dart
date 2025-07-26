@@ -6,9 +6,10 @@ import 'package:app_drive_v1_0/domain/usecases/register_user.dart';
 import 'package:app_drive_v1_0/presentation/screens/login/login_controller.dart';
 import 'package:app_drive_v1_0/presentation/screens/login/login_screen.dart';
 import 'presentation/screens/register/register_screen.dart';
-import 'presentation/screens/register/register_controller.dart';
 import 'package:app_drive_v1_0/presentation/screens/admin/admin_home_screen.dart';
+import 'presentation/screens/register/register_controller.dart';
 import 'package:app_drive_v1_0/presentation/screens/register/register_success_screen.dart';
+
 import 'package:provider/provider.dart';
 
 void main() {
@@ -45,8 +46,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
-        '/admin': (context) =>  AdminHomeScreen(),
-        '/success_user': (context) =>  RegisterSuccessScreen(),
+        '/admin': (context) => AdminHomeScreen(),
+        '/success_user': (context) => RegisterSuccessScreen(),
       },
     );
   }
