@@ -11,7 +11,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
-
+/parameters.md
 # IntelliJ related
 *.iml
 *.ipr
@@ -33,6 +33,7 @@ migrate_working_dir/
 .pub/
 /build/
 /readme.md
+
 
 # Symbolication related
 app.*.symbols

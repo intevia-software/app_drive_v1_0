@@ -1,6 +1,8 @@
 import '../../../domain/usecases/login_user.dart';
 import 'package:flutter/material.dart';
 
+
+
 class LoginController extends ChangeNotifier {
   final LoginUser loginUser;
 
@@ -9,29 +11,33 @@ class LoginController extends ChangeNotifier {
   bool isLoading = false;
   String? error;
 
-  Future<void> login(String email, String password, BuildContext context) async {
 
-    print("➡️ Début login"); // 
+
+
+  Future<bool> login(String email, String password, BuildContext context) async {
+    print("➡️ Début login");
+
     isLoading = true;
     error = null;
     notifyListeners();
 
     try {
       final user = await loginUser(email, password);
+
       if (user.isAdmin) {
         print("🔐 Redirection admin");
-
         Navigator.pushReplacementNamed(context, '/admin');
+        return true;
       } else {
         error = "Accès refusé : rôle non autorisé.";
         print("⛔ Rôle non admin");
-
+        return false;
       }
     } catch (e, stack) {
-      error = 'Erreur de connexion : $e';
+      error = 'Email ou mot de passe incorrect !';
       print("❌ Erreur login: $e");
-      print(stack); // Pour voir la source exacte
-
+      print(stack);
+      return false;
     } finally {
       isLoading = false;
       notifyListeners();

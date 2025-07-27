@@ -1,28 +1,77 @@
-// lib/presentation/screens/validate/validate_screen.dart
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'validate_controller.dart';
+import 'package:app_drive_v1_0/presentation/screens/validate/validate_controller.dart';
 
-class ValidateScreen extends StatelessWidget {
-  const ValidateScreen({Key? key}) : super(key: key);
+class ValidateScreen extends StatefulWidget {
+
+  const ValidateScreen({super.key});
+  @override
+  _ValidateScreenState createState() => _ValidateScreenState();
+}
+
+class _ValidateScreenState extends State<ValidateScreen> {
+  final validate = ValidateController();
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ValidateController(),
-      child: Consumer<ValidateController>(
-        builder: (context, controller, child) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Validation Page')),
-            body: Center(
-              child: controller.isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: controller.validateAction,
-                      child: const Text('Lancer validation'),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Utilisateurs en attente')),
+      body: FutureBuilder<List<dynamic>>(
+        future: validate.fetchPendingUsers(),
+        builder: (context, snapshot) {
+          
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Erreur: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('Aucun utilisateur trouvé'));
+          } else {
+            final users = snapshot.data!;
+
+            return ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final user = users[index];
+
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: InkWell(
+                    onTap: () async {
+                      final userId = user['id'].toString();
+                      await validate.acceptUser(userId);
+
+                      // Optionnel : rafraîchir l'écran après validation
+                      setState(() {});
+                    },
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      leading: const Icon(Icons.person, color: Colors.blue),
+                      title: Text(
+                        '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'.trim().isEmpty
+                            ? 'Pas de nom'
+                            : '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}',
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(user['email'] ?? 'Pas d\'email'),
+                          const SizedBox(height: 4),
+                          Text('ID: ${user['id'] ?? 'Inconnu'}'),
+                        ],
+                      ),
+                      trailing: const Icon(Icons.check, color: Colors.green),
                     ),
-            ),
-          );
+                  ),
+                );
+
+
+              },
+            );
+          }
         },
       ),
     );

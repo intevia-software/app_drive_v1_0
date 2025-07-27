@@ -1,9 +1,7 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'login_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,7 +11,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreen extends State<LoginScreen> {
-  
   bool _isPasswordVisible = false;
   bool _rememberMe = false;
   final _emailController = TextEditingController();
@@ -22,11 +19,36 @@ class _LoginScreen extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    _loadPrefs();
+  }
+
+  void _loadPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _rememberMe = prefs.getBool('remember_me') ?? false;
+      _emailController.text = prefs.getString('saved_email') ?? '';
+    });
+  }
+
+  void _onLoginPressed() async {
+    if (_rememberMe) {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setBool('remember_me', true);
+      prefs.setString('saved_email', _emailController.text.trim());
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setBool('remember_me', false);
+      prefs.remove('saved_email');
+    }
+
+    // Appelle ton controller.login ici...
+  }
+
+  @override
   Widget build(BuildContext context) {
-
     final controller = Provider.of<LoginController>(context);
-
-
 
     return Scaffold(
       body: Form(
@@ -42,7 +64,7 @@ class _LoginScreen extends State<LoginScreen> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Image.asset(
+                    Image.asset(
                       'assets/images/logo.png',
                       width: 200,
                       height: 200,
@@ -64,6 +86,16 @@ class _LoginScreen extends State<LoginScreen> {
                         textAlign: TextAlign.center,
                       ),
                     ),
+
+                    if (controller.error != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          controller.error!,
+                          style: TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     _gap(),
                     TextFormField(
                       controller: _emailController,
@@ -83,14 +115,20 @@ class _LoginScreen extends State<LoginScreen> {
                         return null;
                       },
                       decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                         labelText: 'Email',
-                        prefixIcon: Icon(Icons.email_outlined,
-                        color: Colors.grey),
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          color: Colors.grey,
+                        ),
                         hintText: 'Entrez votre adresse e-mail',
                         border: OutlineInputBorder(),
                         hintStyle: TextStyle(color: Colors.grey),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 1.0),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                            width: 1.0,
+                          ),
                         ),
                         labelStyle: TextStyle(color: Colors.grey),
                       ),
@@ -110,15 +148,21 @@ class _LoginScreen extends State<LoginScreen> {
                       },
                       obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                         labelText: 'Mot de passe',
                         hintText: 'Entrez votre mot de passe',
-                        prefixIcon: const Icon(Icons.lock_outline_rounded,
-                        
-                        color: Colors.grey),
+                        prefixIcon: const Icon(
+                          Icons.lock_outline_rounded,
+
+                          color: Colors.grey,
+                        ),
                         border: const OutlineInputBorder(),
                         hintStyle: TextStyle(color: Colors.grey),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue, width: 1.0),
+                          borderSide: BorderSide(
+                            color: Colors.blue,
+                            width: 1.0,
+                          ),
                         ),
                         labelStyle: TextStyle(color: Colors.grey),
                         suffixIcon: IconButton(
@@ -146,12 +190,8 @@ class _LoginScreen extends State<LoginScreen> {
                         });
                       },
 
-                     
-
-
-                      
-                      activeColor: Colors.blue,          // Color when checked
-                      checkColor: Colors.white,  
+                      activeColor: Colors.blue, // Color when checked
+                      checkColor: Colors.white,
                       title: const Text('Se souvenir de moi '),
                       controlAffinity: ListTileControlAffinity.leading,
                       dense: true,
@@ -159,92 +199,94 @@ class _LoginScreen extends State<LoginScreen> {
                     ),
                     _gap(),
                     SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.resolveWith<Color>((
+                                Set<MaterialState> states,
+                              ) {
                                 if (states.contains(MaterialState.pressed)) {
-                                  return const Color.fromARGB(255, 185, 220, 249); // Active (pressed) color
+                                  return const Color.fromARGB(
+                                    255,
+                                    185,
+                                    220,
+                                    249,
+                                  ); // Active (pressed) color
                                 }
                                 return Colors.blue; // Default background color
-                              },
-                            ),
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                              }),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
                               ),
-                            ),
-                          ),
-                          onPressed: () async {
-                                try {
-                                  final user = await controller.login(
-                                    _emailController.text.trim(),
-                                    _passwordController.text.trim(),
-                                    context,
-                                  );
-                                  
-                                  // Naviguer vers une autre page, afficher message, etc.
-                                } catch (e) {
-                                  print('Erreur login: $e');
-                                  // Afficher snackbar ou message d’erreur à l’utilisateur
-                                }
-                              },
+                        ),
+                        onPressed: () async {
+                          _onLoginPressed();
 
-                          child: const Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Text(
-                              ' Se connecter',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white
-                              ),
+                          final success = await controller.login(
+                            _emailController.text.trim(),
+                            _passwordController.text.trim(),
+                            context,
+                          );
+                        },
+
+                        child: const Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            ' Se connecter',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
-                        
                         ),
                       ),
+                    ),
 
-                      _gap(),
-                      // Bouton "Créer un compte"
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
+                    _gap(),
+                    // Bouton "Créer un compte"
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.resolveWith<Color>((
+                                Set<MaterialState> states,
+                              ) {
                                 if (states.contains(MaterialState.pressed)) {
                                   return Colors.white70;
                                 }
                                 return Colors.black;
-                              },
-                            ),
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                              }),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
                               ),
-                            ),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Text(
-                              'Créer un compte',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            // Action pour créer un compte
-                            //controller.goToRegister();
-                            Navigator.pushNamed(context, '/register');
-
-                          },
                         ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            'Créer un compte',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          // Action pour créer un compte
+                          //controller.goToRegister();
+                          Navigator.pushNamed(context, '/register');
+                        },
                       ),
+                    ),
                   ],
                 ),
               ),

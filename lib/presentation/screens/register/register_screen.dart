@@ -88,6 +88,7 @@ class __RegisterFormState extends State<_RegisterForm> {
               TextFormField(
                 controller: _firstNameController,
                 decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
                   labelText: 'Prénom',
                   prefixIcon: Icon(Icons.person_outline,
                         color: Colors.grey),
@@ -108,7 +109,7 @@ class __RegisterFormState extends State<_RegisterForm> {
               TextFormField(
                 controller: _lastNameController,
                 decoration: const InputDecoration(
-
+                  contentPadding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
                   labelText: 'Nom',
                   prefixIcon: Icon(Icons.person_outline,
                         color: Colors.grey),
@@ -129,6 +130,7 @@ class __RegisterFormState extends State<_RegisterForm> {
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
                   labelText: 'Email',
                   prefixIcon: Icon(Icons.email_outlined,
                         color: Colors.grey),
@@ -153,6 +155,7 @@ class __RegisterFormState extends State<_RegisterForm> {
                 controller: _passwordController,
                 obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
                   labelText: 'Mot de passe',
                   prefixIcon: const Icon(Icons.lock_outline_rounded,
                    color: Colors.grey),

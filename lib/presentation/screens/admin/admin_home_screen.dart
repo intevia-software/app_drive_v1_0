@@ -12,8 +12,16 @@ class AdminHomeScreen extends StatelessWidget {
           children: [
             DrawerHeader(child: Text("Menu")),
             ListTile(
-              title: Text("Option 1"),
-              onTap: () {},
+              title: Text("Valider inscription"),
+              onTap: () => Navigator.pushNamed(context, '/validate'),
+            ),
+            ListTile(
+              title: Text("Ajouter une question"),
+              onTap: () => Navigator.pushNamed(context, '/put_question'),
+            ),
+            ListTile(
+              title: Text("Ajouter une reponse"),
+              onTap: () => Navigator.pushNamed(context, '/put_response'),
             ),
             ListTile(
               title: Text("Déconnexion"),

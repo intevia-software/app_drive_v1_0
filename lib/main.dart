@@ -1,36 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:app_drive_v1_0/data/datasources/auth_api.dart';
 import 'package:app_drive_v1_0/data/repositories/auth_repository.dart';
 import 'package:app_drive_v1_0/domain/usecases/login_user.dart';
 import 'package:app_drive_v1_0/domain/usecases/register_user.dart';
 import 'package:app_drive_v1_0/presentation/screens/login/login_controller.dart';
-import 'package:app_drive_v1_0/presentation/screens/login/login_screen.dart';
-import 'presentation/screens/register/register_screen.dart';
-import 'package:app_drive_v1_0/presentation/screens/admin/admin_home_screen.dart';
-import 'presentation/screens/register/register_controller.dart';
-import 'package:app_drive_v1_0/presentation/screens/register/register_success_screen.dart';
-
+import 'package:app_drive_v1_0/presentation/screens/register/register_controller.dart';
+import 'package:app_drive_v1_0/core/services/storage_service.dart';
+import 'package:app_drive_v1_0/presentation/routes/app_router.dart';
+import 'package:app_drive_v1_0/injection/injection.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  final authApi = AuthApi();
+import 'data/datasources/auth_api.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialiser les services et dépendances
+  await StorageService.init(); // Doit être async
+  setupDependencies();
+
+  final authApi = getIt<AuthApi>();
+  await authApi.init(); // Token + utilisateur si dispo
+
+  // Injection manuelle pour login/register (peut être migré vers get_it aussi)
   final authRepo = AuthRepository(authApi);
-
   final loginUseCase = LoginUser(authRepo);
-  final loginController = LoginController(loginUseCase);
-
   final registerUseCase = RegisterUser(authRepo);
+
+  final loginController = LoginController(loginUseCase);
   final registerController = RegisterController(registerUseCase);
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => loginController),
-        ChangeNotifierProvider(
-          create: (_) => registerController,
-        ), // ✅ Ajout ici
+        ChangeNotifierProvider(create: (_) => registerController),
       ],
-
       child: MyApp(),
     ),
   );
@@ -43,12 +47,7 @@ class MyApp extends StatelessWidget {
       title: 'App Drive',
       theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: '/',
-      routes: {
-        '/': (context) => LoginScreen(),
-        '/register': (context) => RegisterScreen(),
-        '/admin': (context) => AdminHomeScreen(),
-        '/success_user': (context) => RegisterSuccessScreen(),
-      },
+      onGenerateRoute: AppRouter.generateRoute,
     );
   }
 }

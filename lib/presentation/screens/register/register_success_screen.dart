@@ -4,7 +4,7 @@ class RegisterSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Admin Dashboard")),
+      appBar: AppBar(title: Text("Inscription réussie.")),
       body:  Align(
         alignment: Alignment.topCenter,
         child: SingleChildScrollView(

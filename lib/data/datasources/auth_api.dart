@@ -1,8 +1,44 @@
 import 'package:dio/dio.dart';
 import '../../core/services/api_client.dart';
 import 'package:app_drive_v1_0/domain/entities/user.dart';
+import 'package:app_drive_v1_0/core/services/storage_service.dart';
+
+
+
 
 class AuthApi {
+
+
+
+
+  String? _token;
+  User? _currentUser;
+
+  String? get token => _token;
+  User? get currentUser => _currentUser;
+  bool get isAdmin => _currentUser?.roles.contains('ROLE_ADMIN') ?? false;
+
+  Future<void> init() async {
+    _token = StorageService.getToken();
+    if (_token != null) {
+      try {
+        final userResponse = await ApiClient.dio.get(
+          '/me',
+          options: Options(
+            headers: {'Authorization': 'Bearer $_token'},
+          ),
+        );
+
+        _currentUser = User.fromJson(userResponse.data);
+      } catch (e) {
+        // Token invalide : on l'efface
+        _token = null;
+        _currentUser = null;
+        await StorageService.clearToken();
+      }
+    }
+  }
+
   Future<User> login(String email, String password) async {
     try {
       final response = await ApiClient.dio.post(
@@ -13,33 +49,28 @@ class AuthApi {
         },
       );
 
-      print('Réponse login status: ${response.statusCode}');
-      print('Réponse login data: ${response.data}');
+      _token = response.data['token'];
 
-      // Supposons que tu récupères un token dans response.data['token']
-      final token = response.data['token'];
-      if (token == null) {
+      if (_token == null) {
         throw Exception('Token non reçu');
+      }else {
+        await StorageService.saveToken(_token);
       }
 
-      // Récupération des infos utilisateur via /me avec le token
       final userResponse = await ApiClient.dio.get(
         '/me',
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {'Authorization': 'Bearer $_token'},
         ),
       );
 
-      print('User data: ${userResponse.data}');
-
-      return User.fromJson(userResponse.data);
+      _currentUser = User.fromJson(userResponse.data);
+      return _currentUser!;
     } on DioException catch (e) {
       print('Erreur Dio: ${e.response?.statusCode} - ${e.response?.data}');
       rethrow;
     }
   }
-
-
 
   Future<Map<String, dynamic>> register({
     required String email,
@@ -72,4 +103,14 @@ class AuthApi {
       throw Exception(e.response?.data ?? 'Échec de l’enregistrement');
     }
   }
+
+  void logout() {
+    _token = null;
+    _currentUser = null;
+    StorageService.clearToken();
+
+  }
 }
+
+
+  //final AuthApi authApi = AuthApi();
