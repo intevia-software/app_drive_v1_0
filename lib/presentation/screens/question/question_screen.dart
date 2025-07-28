@@ -1,4 +1,4 @@
-import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:app_drive_v1_0/presentation/screens/question/question_controller.dart';
 import 'package:app_drive_v1_0/core/services/storage_service.dart';
@@ -52,13 +52,29 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
       if (_token != null ) {
         final success = await _controller.submitQuestion(
+          context: context,
           question: _questionController.text.trim(),
           type: _selectedType ?? '',
           token: _token,
         );
+
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Question soumise avec succès.')),
+          );
+          _resetForm();
+        }
       }
     }
   }
+
+  void _resetForm() {
+  _formKey.currentState?.reset();
+  _questionController.clear();
+  _selectedType = null;
+  _controller.clearImage(); // 👈 tu dois créer cette méthode dans QuestionController
+  setState(() {}); // Pour forcer la mise à jour visuelle
+}
 
   @override
   Widget build(BuildContext context) {
@@ -130,6 +146,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                   return null;
                 },
                 decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Question',
                   hintText: 'Entrez votre question',
                   prefixIcon: Icon(Icons.question_answer, color: Colors.grey),
@@ -146,6 +163,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
               // Dropdown du type de question
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                   labelText: 'Type de question',
                   border: OutlineInputBorder(),
                 ),

@@ -10,6 +10,8 @@ import 'package:app_drive_v1_0/presentation/screens/register/register_success_sc
 import 'package:app_drive_v1_0/presentation/screens/admin/admin_home_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/question/question_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/response/response_screen.dart';
+import 'package:app_drive_v1_0/presentation/screens/test/test_screen.dart';
+import 'package:app_drive_v1_0/presentation/screens/error/connexion_error_screen.dart';
 import 'package:app_drive_v1_0/injection/injection.dart';
 
 
@@ -25,6 +27,9 @@ class AppRouter {
       case '/register':
         return MaterialPageRoute(builder: (_) => const RegisterScreen());
 
+      case '/error_connexion':
+        return MaterialPageRoute(builder: (_) =>  ConnexionErrorScreen());
+
       case '/success_user':
         return MaterialPageRoute(builder: (_) =>  RegisterSuccessScreen());
 
@@ -32,6 +37,15 @@ class AppRouter {
       case '/validate':
         if (authApi.isAdmin) {
           return MaterialPageRoute(builder: (_) =>  ValidateScreen());
+        } else {
+          return MaterialPageRoute(
+            builder: (_) => const DeniedScreen(),
+          );
+        }
+
+      case '/test':
+        if (authApi.isAdmin) {
+          return MaterialPageRoute(builder: (_) => TestScreen());
         } else {
           return MaterialPageRoute(
             builder: (_) => const DeniedScreen(),

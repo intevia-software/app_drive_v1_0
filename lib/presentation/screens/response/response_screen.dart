@@ -9,10 +9,7 @@ class ResponseScreen extends StatefulWidget {
 
 class _ResponseScreenState extends State<ResponseScreen> {
   final Response = ResponseController();
-  List<TextEditingController> _responseControllers = List.generate(
-    3,
-    (_) => TextEditingController(),
-  );
+  List<TextEditingController> _responseControllers = List.generate(3, (_) => TextEditingController(),);
   List<bool> _responsesChecked = [false, false, false];
 
   @override
@@ -20,7 +17,7 @@ class _ResponseScreenState extends State<ResponseScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Ajouter une réponse')),
       body: FutureBuilder<List<dynamic>>(
-        future: Response.fetchPendingUsers(),
+        future: Response.fetchPendingUsers(context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -101,7 +98,7 @@ class _ResponseScreenState extends State<ResponseScreen> {
                                       decoration: InputDecoration(
                                         
                                         labelText: 'Réponse ${i + 1}',
-                                        hintText: 'Entrez votre adresse e-mail',
+                                        hintText: 'Entrez réponse ${i + 1}',
                                         border: OutlineInputBorder(),
                                         hintStyle: TextStyle(color: Colors.grey),
                                         focusedBorder: OutlineInputBorder(
@@ -113,7 +110,7 @@ class _ResponseScreenState extends State<ResponseScreen> {
                                         labelStyle: TextStyle(color: Colors.grey),
                                         contentPadding:
                                             const EdgeInsets.symmetric(
-                                              horizontal: 12,
+                                              horizontal: 6,
                                               vertical: 6,
                                             ),
                                       ),
@@ -183,6 +180,7 @@ class _ResponseScreenState extends State<ResponseScreen> {
                                   if (text.isNotEmpty) {
                                     try {
                                       await Response.postResponse(
+                                        context, 
                                         text,
                                         isChecked,
                                         question['id'],
@@ -194,6 +192,16 @@ class _ResponseScreenState extends State<ResponseScreen> {
                                     print('⚠️ La réponse $i est vide.');
                                   }
                                 }
+
+                                // ✅ Après la boucle : recharge complètement l'écran
+                                Navigator.pushReplacement(
+                                  context,
+                                  PageRouteBuilder(
+                                    pageBuilder: (_, __, ___) => const ResponseScreen(),
+                                    transitionDuration: Duration.zero,
+                                    reverseTransitionDuration: Duration.zero,
+                                  ),
+                                );
                               },
                               child: const Padding(
                                 padding: EdgeInsets.all(10.0),
