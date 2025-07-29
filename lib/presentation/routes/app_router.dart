@@ -8,6 +8,7 @@ import 'package:app_drive_v1_0/presentation/screens/denied/denied_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/register/register_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/register/register_success_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/admin/admin_home_screen.dart';
+import 'package:app_drive_v1_0/presentation/screens/user/user_home_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/question/question_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/response/response_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/test/test_screen.dart';
@@ -34,6 +35,33 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) =>  RegisterSuccessScreen());
 
 
+      case '/test_user':
+        if (authApi.isAdmin == false  && authApi.currentUser?.accepted == true ) {
+          return MaterialPageRoute(builder: (_) => TestScreen());
+        } else {
+          return MaterialPageRoute(
+            builder: (_) => const DeniedScreen(),
+          );
+        }
+
+      case '/user':
+        if (authApi.isAdmin == false  && authApi.currentUser?.accepted == true ) {
+          return MaterialPageRoute(builder: (_) => UserHomeScreen());
+        } else {
+          return MaterialPageRoute(
+            builder: (_) => const DeniedScreen(),
+          );
+        }
+
+      case '/test_admin':
+        if (authApi.isAdmin) {
+          return MaterialPageRoute(builder: (_) => TestScreen());
+        } else {
+          return MaterialPageRoute(
+            builder: (_) => const DeniedScreen(),
+          );
+        }
+
       case '/validate':
         if (authApi.isAdmin) {
           return MaterialPageRoute(builder: (_) =>  ValidateScreen());
@@ -43,14 +71,6 @@ class AppRouter {
           );
         }
 
-      case '/test':
-        if (authApi.isAdmin) {
-          return MaterialPageRoute(builder: (_) => TestScreen());
-        } else {
-          return MaterialPageRoute(
-            builder: (_) => const DeniedScreen(),
-          );
-        }
       case '/put_question':
         if (authApi.isAdmin) {
           return MaterialPageRoute(builder: (_) =>  QuestionScreen());

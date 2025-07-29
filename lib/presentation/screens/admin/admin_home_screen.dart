@@ -13,7 +13,7 @@ class AdminHomeScreen extends StatelessWidget {
             DrawerHeader(child: Text("Menu")),
             ListTile(
               title: Text("Passer le test"),
-              onTap: () => Navigator.pushNamed(context, '/test'),
+              onTap: () => Navigator.pushNamed(context, '/test_admin'),
             ),
             ListTile(
               title: Text("Valider inscription"),

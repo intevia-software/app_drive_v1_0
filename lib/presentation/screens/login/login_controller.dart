@@ -28,9 +28,14 @@ class LoginController extends ChangeNotifier {
         print("🔐 Redirection admin");
         Navigator.pushReplacementNamed(context, '/admin');
         return true;
-      } else {
+      } else if (user.isAdmin == false && user.accepted == true ) {
+       
+          Navigator.pushReplacementNamed(context, '/user');
+        return false;
+      } else  {
         error = "Accès refusé : rôle non autorisé.";
         print("⛔ Rôle non admin");
+        print( user.accepted);
         return false;
       }
     } catch (e, stack) {

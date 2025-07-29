@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app_drive_v1_0/presentation/screens/test/test_controller.dart';
-
+import 'package:app_drive_v1_0/presentation/screens/test/ResilierImage.dart';
 
 class TestScreen extends StatefulWidget {
   @override
@@ -58,9 +58,8 @@ class _TestScreenState extends State<TestScreen> {
                 child: Column(
                   children: [
                     if (result['img'] != null && result['img'].toString().isNotEmpty)
-                      Image.network(
-                        'https://driving.ovh/images/questions/${result['img']}',
-                        errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image),
+                      ResilientImage(
+                        imageUrl: 'https://driving.ovh/images/questions/${result['img']}',
                       ),
                     SizedBox(height: 20),
                     Container(
@@ -124,30 +123,72 @@ class _TestScreenState extends State<TestScreen> {
                             Expanded(
                               flex: 1,
                               child: Checkbox(
-                                value: index == 0
-                                    ? controller.first
-                                    : index == 1
-                                        ? controller.second
-                                        : controller.third,
-                                onChanged: (val) {
-                                  if (index == 0) {
-                                    controller.setFirst(val);
-                                  } else if (index == 1) {
-                                    controller.setSecond(val);
-                                  } else {
-                                    controller.setThird(val);
-                                  }
-                                },
-                              ),
+                                value: controller.selected[index],
+                                onChanged: (val) => controller.setSelected(index, val),
+                              )
                             ),
                           ],
                         ),
                       );
                     }),
-                    ElevatedButton(
-                      onPressed: controller.handleValid,
-                      child: Text('Envoyer'),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.resolveWith<Color>((
+                                Set<MaterialState> states,
+                              ) {
+                                if (states.contains(MaterialState.pressed)) {
+                                  return const Color.fromARGB(
+                                    255,
+                                    185,
+                                    220,
+                                    249,
+                                  ); // Active (pressed) color
+                                }
+                                return Colors.blue; // Default background color
+                              }),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                        ),
+                        onPressed: () async {
+                          controller.handleValid(context);
+                        },
+
+                        child: const Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Text(
+                            ' Se connecter',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
+                    // ElevatedButton(
+                    //   onPressed: () { controller.handleValid(context);
+                    //   }
+                    //    child: const Padding(
+                    //       padding: EdgeInsets.all(10.0),
+                    //       child: Text(
+                    //         ' Se connecter',
+                    //         style: TextStyle(
+                    //           fontSize: 16,
+                    //           fontWeight: FontWeight.bold,
+                    //           color: Colors.white,
+                    //         ),
+                    //       ),
+                    //     ),
+                    // ),
                   ],
                 ),
               ),

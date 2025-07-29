@@ -2,29 +2,27 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:app_drive_v1_0/core/services/api_client.dart';
+import 'package:app_drive_v1_0/presentation/screens/resultat/result_screen.dart';
+import 'package:app_drive_v1_0/presentation/screens/resultat/result_controller.dart';
 import 'package:app_drive_v1_0/core/services/storage_service.dart';
+
 class TestController extends ChangeNotifier {
-  List<Map<String, dynamic>> res = [];
+  List<Map<String, dynamic>> res = []; // Liste des questions
+  List<Map<String, dynamic>> response = []; // Réponses de l'utilisateur
+
+  List<bool> selected = [false, false, false]; // Réponses actuelles de l'utilisateur (3 cases)
+
   int nbq = 40;
   int seconde = 30;
   int time = 10 * 30;
 
   int count = 0;
-  bool first = false;
-  bool second = false;
-  bool third = false;
-
-  bool dataFirst = false;
-  bool dataSecond = false;
-  bool dataThird = false;
-
-  List<Map<String, dynamic>> response = [];
-
   int setter = 0;
   int counter = 0;
 
   Timer? _timer;
 
+  // Fetch questions depuis l'API
   Future<void> fetchQuestions(BuildContext context) async {
     try {
       final token = await StorageService.getToken();
@@ -58,31 +56,16 @@ class TestController extends ChangeNotifier {
     }
   }
 
-  void setFirst(bool? val) {
-    if (val != null) {
-      dataFirst = val;
-      first = val;
+  // Mise à jour d'une case cochée
+  void setSelected(int index, bool? val) {
+    if (val != null && index >= 0 && index < selected.length) {
+      selected[index] = val;
       notifyListeners();
     }
   }
 
-  void setSecond(bool? val) {
-    if (val != null) {
-      dataSecond = val;
-      second = val;
-      notifyListeners();
-    }
-  }
-
-  void setThird(bool? val) {
-    if (val != null) {
-      dataThird = val;
-      third = val;
-      notifyListeners();
-    }
-  }
-
-  void startTimer() {
+  // Démarrage du timer
+  void startTimer(BuildContext context) {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       setter++;
@@ -91,14 +74,15 @@ class TestController extends ChangeNotifier {
       if (setter >= time) {
         setter = 0;
         counter = 0;
-        handleValid();
+        handleValid(context);
       }
 
       notifyListeners();
     });
   }
 
-  void handleValid() {
+  // Validation de la réponse actuelle
+  void handleValid(BuildContext context) {
     _timer?.cancel();
     setter = 0;
     counter = 0;
@@ -113,56 +97,26 @@ class TestController extends ChangeNotifier {
       'img': result['img'],
       'question': result['question'],
       'response': result['response'],
-      'state': [dataFirst, dataSecond, dataThird],
-      'type': result['type']
+      'state': List<bool>.from(selected), // copie des réponses actuelles
+      'type': result['type'],
     };
 
     response.add(newResponse);
     count++;
 
-    first = false;
-    second = false;
-    third = false;
-
+    // Réinitialise les sélections
+    selected = [false, false, false];
     notifyListeners();
 
     if (count >= nbq || count >= res.length) {
-      score();
+      score(context);
     } else {
-      startTimer();
+      startTimer(context);
     }
   }
 
-  List<dynamic> typeScore(String type) {
-    int sc = 0;
-    int numberQuestion = 0;
-
-    for (var resp in response) {
-      if (resp['type'] == type) {
-        numberQuestion++;
-
-        final question = res.firstWhere(
-          (q) => q['id'] == resp['id'],
-          orElse: () => {},
-        );
-
-        int score = 0;
-        if (question.isNotEmpty) {
-          for (int s = 0; s < 3; s++) {
-            if (resp['state'][s] == question['state'][s]) {
-              score++;
-            }
-          }
-        }
-
-        if (score == 3) sc++;
-      }
-    }
-
-    return [type, sc, numberQuestion];
-  }
-
-  void score() {
+  // Calcule le score total
+  void score(BuildContext context) {
     int sc = 0;
 
     for (var resp in response) {
@@ -171,23 +125,53 @@ class TestController extends ChangeNotifier {
         orElse: () => {},
       );
 
-      int score = 0;
-      if (question.isNotEmpty) {
-        for (int s = 0; s < 3; s++) {
-          if (resp['state'][s] == question['state'][s]) {
-            score++;
+      if (question.isNotEmpty &&
+          question.containsKey('state') &&
+          resp.containsKey('state')) {
+        final List<dynamic> correctAnswers = question['state'];
+        final List<dynamic> userAnswers = resp['state'];
+
+        if (correctAnswers.length == 3 && userAnswers.length == 3) {
+          int correctCount = 0;
+          for (int i = 0; i < 3; i++) {
+            if (userAnswers[i] == correctAnswers[i]) {
+              correctCount++;
+            }
+          }
+
+          // Ajoute un point si toutes les réponses sont correctes
+          if (correctCount == 3) {
+            sc++;
           }
         }
       }
-
-      if (score == 3) sc++;
     }
 
-    sendToResult();
+    sendToResult(context, sc, response,res);
   }
 
-  void sendToResult() {
+  // Envoie les résultats (ou navigation)
+  void sendToResult(BuildContext context, int sc, List<Map<String, dynamic>> response ,List<Map<String, dynamic>> res ) {
+    print("================= RES");
+    print(res);
+    print("================= RESPONSE");
+    print(response);
+    print("================= SCORE");
+    print(sc);
     // Navigator.pushNamed(context, '/result');
+
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => ResultScreen(
+        controller: ResultController(
+          questions: res,
+          responses: response,
+          score: sc,
+        ),
+      ),
+    ),
+  );
   }
 
   @override
