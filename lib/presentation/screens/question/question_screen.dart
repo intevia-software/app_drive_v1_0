@@ -140,9 +140,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer une question.';
                   }
-                  if (value.length < 6) {
-                    return 'La question doit contenir au moins 6 caractères.';
-                  }
+                 
                   return null;
                 },
                 decoration: const InputDecoration(

@@ -8,8 +8,10 @@ import 'package:app_drive_v1_0/core/services/storage_service.dart';
 import 'package:app_drive_v1_0/presentation/routes/app_router.dart';
 import 'package:app_drive_v1_0/injection/injection.dart';
 import 'package:provider/provider.dart';
-
 import 'data/datasources/auth_api.dart';
+import 'package:get/get.dart';
+import 'package:flutter/services.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +31,12 @@ void main() async {
   final loginController = LoginController(loginUseCase);
   final registerController = RegisterController(registerUseCase);
 
+ // Désactiver la rotation, forcer mode portrait uniquement
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown, // optionnel
+  ]);
+
   runApp(
     MultiProvider(
       providers: [
@@ -43,7 +51,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'App Drive',
       theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: false,),
       initialRoute: '/',

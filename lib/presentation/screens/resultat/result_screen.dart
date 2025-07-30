@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'result_controller.dart';
+import 'package:app_drive_v1_0/core/services/globals.dart' as globals;
 
 class ResultScreen extends StatelessWidget {
   final ResultController controller;
@@ -79,7 +80,7 @@ class ResultScreen extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.network(
-                          "https://driving.ovh/images/questions/$image",
+                          "${globals.domaine}/images/questions/$image",
                           height: 180,
                           width: double.infinity,
                           fit: BoxFit.cover,

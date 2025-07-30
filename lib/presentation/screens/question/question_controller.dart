@@ -85,7 +85,7 @@ class QuestionController extends ChangeNotifier {
       return false;
     }
 
-    print('✅ Image sélectionnée.');
+
 
     try {
       final formData = FormData.fromMap({

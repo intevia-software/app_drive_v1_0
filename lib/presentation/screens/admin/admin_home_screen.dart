@@ -12,6 +12,10 @@ class AdminHomeScreen extends StatelessWidget {
           children: [
             DrawerHeader(child: Text("Menu")),
             ListTile(
+              title: Text("Liste des questions"),
+              onTap: () => Navigator.pushNamed(context, '/show_questions'),
+            ),
+            ListTile(
               title: Text("Passer le test"),
               onTap: () => Navigator.pushNamed(context, '/test_admin'),
             ),

@@ -12,6 +12,7 @@ import 'package:app_drive_v1_0/presentation/screens/user/user_home_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/question/question_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/response/response_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/test/test_screen.dart';
+import 'package:app_drive_v1_0/presentation/screens/show_questions/show_questions_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/error/connexion_error_screen.dart';
 import 'package:app_drive_v1_0/injection/injection.dart';
 
@@ -53,6 +54,16 @@ class AppRouter {
           );
         }
 
+      case '/show_questions':
+        if (authApi.isAdmin) {
+          return MaterialPageRoute(builder: (_) => ShowQuestionsScreen());
+        } else {
+          return MaterialPageRoute(
+            builder: (_) => const DeniedScreen(),
+          );
+        }
+      
+    
       case '/test_admin':
         if (authApi.isAdmin) {
           return MaterialPageRoute(builder: (_) => TestScreen());
