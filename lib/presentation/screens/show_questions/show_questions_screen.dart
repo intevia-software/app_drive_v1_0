@@ -54,14 +54,15 @@ class _ShowQuestionsScreenState extends State<ShowQuestionsScreen> {
               return const Padding(
                 padding: EdgeInsets.symmetric(vertical: 16),
                 child: Center(child: CircularProgressIndicator()),
+                
               );
             }
 
             final q = controller.questions[index];
             return Card(
-              color:const Color.fromARGB(255, 220, 238, 252),
+              
               elevation: 4,
-              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 30),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6),
                 
@@ -102,6 +103,7 @@ class _ShowQuestionsScreenState extends State<ShowQuestionsScreen> {
                         color: Colors.blue,
                         borderRadius: BorderRadius.circular(6),
                       ),
+                      width: 1000,
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       child: Text(
                         q.question,
@@ -125,21 +127,21 @@ class _ShowQuestionsScreenState extends State<ShowQuestionsScreen> {
                           margin: const EdgeInsets.symmetric(vertical: 4),
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                           decoration: BoxDecoration(
-                            color: isCorrect ? Colors.blue.shade300 : Colors.blue.shade100,
+                            color: isCorrect ? Colors.blue[100] :  Colors.grey[100],
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Row(
                             children: [
                               Icon(
                                 isCorrect ? Icons.check_circle : Icons.circle_outlined,
-                                color: isCorrect ? const Color.fromARGB(255, 0, 53, 96) : Colors.grey,
+                                color: isCorrect ? Colors.blue : Colors.black,
                               ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
                                   q.response[i],
                                   style: TextStyle(
-                                    color: isCorrect ? Colors.blue.shade900 : Colors.black87,
+                                    color: isCorrect ? Colors.black87 : Colors.black87,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -175,9 +177,10 @@ class _ShowQuestionsScreenState extends State<ShowQuestionsScreen> {
                         child: const Text('Editer'),
                       ),
                     ),
+                    
                   ],
                 ),
-              ),
+              ), 
             );
 
           },

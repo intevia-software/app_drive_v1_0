@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'register_controller.dart';
+import 'register_admin_controller.dart';
 
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
+class RegisterAdminScreen extends StatelessWidget {
+  const RegisterAdminScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(title: const Text('Inscription')),
       body: Align(
@@ -23,31 +22,26 @@ class RegisterScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                     Image.asset(
+                    Image.asset(
                       'assets/images/logo.png',
                       width: 200,
                       height: 200,
                       fit: BoxFit.cover,
                     ),
-                    
+
                     _gap(),
                     _RegisterForm(),
-        
-              ] )
-              )
-            )
-          )
-        
-        
-        
-    
-
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-    Widget _gap() => const SizedBox(height: 16);
+  Widget _gap() => const SizedBox(height: 16);
 }
 
 class _RegisterForm extends StatefulWidget {
@@ -66,16 +60,11 @@ class __RegisterFormState extends State<_RegisterForm> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
 
-
-
   bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
-    final controller = Provider.of<RegisterController>(context);
-      
-
-    
+    final controller = Provider.of<RegisterAdminController>(context);
 
     return Container(
       constraints: const BoxConstraints(maxWidth: 300),
@@ -260,7 +249,7 @@ class __RegisterFormState extends State<_RegisterForm> {
                             final success = await controller.register(
                               email: _emailController.text.trim(),
                               password: _passwordController.text,
-                              roles: ['ROLE_USER'],
+                              roles: ['ROLE_ADMIN', 'ROLE_USER'],
                               token: _tokenController.text.trim(),
                               firstName: _firstNameController.text.trim(),
                               lastName: _lastNameController.text.trim(),
@@ -310,6 +299,4 @@ class __RegisterFormState extends State<_RegisterForm> {
     _lastNameController.dispose();
     super.dispose();
   }
-
-   
 }

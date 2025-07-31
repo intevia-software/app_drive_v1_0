@@ -36,7 +36,9 @@ class ResultScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Score : ${controller.score}/${controller.responses.length}'),
+        title: Text(
+          'Score : ${controller.score}/${controller.responses.length}',
+        ),
         centerTitle: true,
       ),
       body: ListView(
@@ -47,16 +49,49 @@ class ResultScreen extends StatelessWidget {
             final correct = correctByType[type] ?? 0;
             final total = totalByType[type]!;
             return Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Text(
-                "$type : $correct / $total",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Colors.blueGrey,
+              padding: const EdgeInsets.all(4),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.blue, // ou une autre couleur si souhaité
+                  borderRadius: BorderRadius.circular(6),
+                  //border: BoxBorder.all(color: Colors.blue),
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      "$type",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Spacer(),
+                    Text(
+                      " $correct / $total",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
+
+            // Padding(
+            //   padding: const EdgeInsets.only(bottom: 6),
+            //   child: Text(
+            //     "$type : $correct / $total",
+            //     style: const TextStyle(
+            //       fontWeight: FontWeight.bold,
+            //       fontSize: 16,
+            //       color: Colors.blueGrey,
+            //     ),
+            //   ),
+            // );
           }),
           const Divider(thickness: 1.5, height: 32),
           // ==== Questions + réponses corrigées ====
@@ -70,7 +105,9 @@ class ResultScreen extends StatelessWidget {
             return Card(
               elevation: 4,
               margin: const EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -84,13 +121,17 @@ class ResultScreen extends StatelessWidget {
                           height: 180,
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+                          errorBuilder: (_, __, ___) =>
+                              const Icon(Icons.broken_image),
                         ),
                       ),
                     const SizedBox(height: 10),
                     Text(
                       question,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     ListView.builder(
@@ -126,13 +167,13 @@ class ResultScreen extends StatelessWidget {
                                 correct
                                     ? Icons.check_circle
                                     : userSelected
-                                        ? Icons.cancel
-                                        : Icons.radio_button_unchecked,
+                                    ? Icons.cancel
+                                    : Icons.radio_button_unchecked,
                                 color: correct
                                     ? Colors.green
                                     : userSelected
-                                        ? Colors.red
-                                        : Colors.grey,
+                                    ? Colors.red
+                                    : Colors.grey,
                               ),
                               const SizedBox(width: 10),
                               Expanded(child: Text(answer)),

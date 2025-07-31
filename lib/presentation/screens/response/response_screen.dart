@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app_drive_v1_0/presentation/screens/response/response_controller.dart';
 import 'package:app_drive_v1_0/core/services/globals.dart' as globals;
+import 'package:getwidget/getwidget.dart';
 
 class ResponseScreen extends StatefulWidget {
   const ResponseScreen({super.key});
@@ -69,27 +70,37 @@ class _ResponseScreenState extends State<ResponseScreen> {
                             ),
                           ),
 
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 30),
 
-                          // ✅ Type
-                          Text(
-                            'Type : ${question['type'] ?? 'Inconnu'}',
+                          Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Container(
+                                  padding: const EdgeInsets.only(left: 10),
+                          child: Text(
+                            ' ${question['type'] ?? 'Inconnu'}',
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                               color: Colors.grey,
                             ),
                           ),
+                                ),
+                          ),
 
                           const SizedBox(height: 6),
 
-                          // ✅ Question
-                          Text(
+                          Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Container(
+                                  padding: const EdgeInsets.only(left: 10),
+                          child:Text(
                             question['question'] ?? 'Pas de question',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
+                          ),
+                                ),
                           ),
 
                           const SizedBox(height: 12),
@@ -98,72 +109,80 @@ class _ResponseScreenState extends State<ResponseScreen> {
                           Column(
                             children: List.generate(3, (i) {
                               return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 6),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: _responseControllers[i],
-                                        decoration: InputDecoration(
-                                          labelText: 'Réponse ${i + 1}',
-                                          hintText: 'Entrez réponse ${i + 1}',
-                                          border: const OutlineInputBorder(),
-                                          hintStyle: const TextStyle(
-                                              color: Colors.grey),
-                                          focusedBorder:
-                                              const OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Colors.blue,
-                                              width: 1.0,
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: Container(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  decoration: BoxDecoration(
+                                    color:  Colors.grey[200], // ou une autre couleur si souhaité
+                                    borderRadius: BorderRadius.circular(6),
+                                    //border: BoxBorder.all(color: Colors.blue),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextFormField(
+                                          controller: _responseControllers[i],
+                                          decoration: InputDecoration(
+                                            hintText: 'Entrez réponse ${i + 1}',
+                                             border: InputBorder.none,
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                  horizontal: 6,
+                                                  vertical: 8,
+                                                ),
+                                          ),
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.trim().isEmpty) {
+                                              return 'Veuillez saisir une réponse';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+
+                                      Transform.scale(
+                                        scale: 1.3,
+                                        child: Theme(
+                                          data: Theme.of(context).copyWith(
+                                            unselectedWidgetColor: Colors.blue,
+                                            checkboxTheme: CheckboxThemeData(
+                                              shape: CircleBorder(),
+                                              side: BorderSide(
+                                                color: Colors.blue,
+                                                width: 1,
+                                              ),
+                                              fillColor:
+                                                  MaterialStateProperty.resolveWith<
+                                                    Color
+                                                  >((states) {
+                                                    if (states.contains(
+                                                      MaterialState.selected,
+                                                    )) {
+                                                      return Colors.blue;
+                                                    }
+                                                    return Colors.transparent;
+                                                  }),
+                                              checkColor:
+                                                  MaterialStateProperty.all(
+                                                    Colors.transparent,
+                                                  ),
                                             ),
                                           ),
-                                          labelStyle: const TextStyle(
-                                              color: Colors.grey),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                            horizontal: 6,
-                                            vertical: 6,
+                                          child: Checkbox(
+                                            value: _responsesChecked[i],
+                                            onChanged: (value) {
+                                              if (value == null) return;
+                                              setState(() {
+                                                _responsesChecked[i] = value;
+                                              });
+                                            },
                                           ),
                                         ),
-                                        validator: (value) {
-                                          if (value == null ||
-                                              value.trim().isEmpty) {
-                                            return 'Veuillez saisir une réponse';
-                                          }
-                                          return null;
-                                        },
                                       ),
-                                    ),
-                                    const SizedBox(width: 12),
-
-                                    // ✅ Checkbox
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.blue, width: 1),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Transform.scale(
-                                        scale: 1.5,
-                                        child: Checkbox(
-                                          value: _responsesChecked[i],
-                                          shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10.0)),
-                                          ),
-                                          onChanged: (value) {
-                                            if (value == null) return;
-                                            setState(() {
-                                              _responsesChecked[i] = value;
-                                            });
-                                          },
-                                          checkColor: Colors.transparent,
-                                          activeColor: Colors.blue,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               );
                             }),
@@ -177,22 +196,29 @@ class _ResponseScreenState extends State<ResponseScreen> {
                             child: ElevatedButton(
                               style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.resolveWith<Color>(
-                                  (Set<MaterialState> states) {
-                                    if (states
-                                        .contains(MaterialState.pressed)) {
-                                      return const Color.fromARGB(
-                                          255, 185, 220, 249);
-                                    }
-                                    return Colors.blue;
-                                  },
-                                ),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                ),
+                                    MaterialStateProperty.resolveWith<Color>((
+                                      Set<MaterialState> states,
+                                    ) {
+                                      if (states.contains(
+                                        MaterialState.pressed,
+                                      )) {
+                                        return const Color.fromARGB(
+                                          255,
+                                          185,
+                                          220,
+                                          249,
+                                        );
+                                      }
+                                      return Colors.blue;
+                                    }),
+                                shape:
+                                    MaterialStateProperty.all<
+                                      RoundedRectangleBorder
+                                    >(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
                               ),
                               onPressed: () async {
                                 // ✅ Valide tous les champs
@@ -200,11 +226,13 @@ class _ResponseScreenState extends State<ResponseScreen> {
                                   return;
                                 }
 
-                                for (int i = 0;
-                                    i < _responseControllers.length;
-                                    i++) {
-                                  String text =
-                                      _responseControllers[i].text.trim();
+                                for (
+                                  int i = 0;
+                                  i < _responseControllers.length;
+                                  i++
+                                ) {
+                                  String text = _responseControllers[i].text
+                                      .trim();
                                   bool isChecked = _responsesChecked[i];
 
                                   try {
@@ -216,7 +244,8 @@ class _ResponseScreenState extends State<ResponseScreen> {
                                     );
                                   } catch (e) {
                                     print(
-                                        'Erreur lors de l\'envoi de la réponse $i: $e');
+                                      'Erreur lors de l\'envoi de la réponse $i: $e',
+                                    );
                                   }
                                 }
 

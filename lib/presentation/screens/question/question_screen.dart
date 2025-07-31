@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:app_drive_v1_0/presentation/screens/question/question_controller.dart';
 import 'package:app_drive_v1_0/core/services/storage_service.dart';
@@ -29,7 +28,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
     super.initState();
     _controller = QuestionController();
     _controller.addListener(() {
-      setState(() {// Utilise le getter public
+      setState(() {
+        // Utilise le getter public
       });
     });
   }
@@ -50,7 +50,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
         return;
       }
 
-      if (_token != null ) {
+      if (_token != null) {
         final success = await _controller.submitQuestion(
           context: context,
           question: _questionController.text.trim(),
@@ -69,12 +69,13 @@ class _QuestionScreenState extends State<QuestionScreen> {
   }
 
   void _resetForm() {
-  _formKey.currentState?.reset();
-  _questionController.clear();
-  _selectedType = null;
-  _controller.clearImage(); // 👈 tu dois créer cette méthode dans QuestionController
-  setState(() {}); // Pour forcer la mise à jour visuelle
-}
+    _formKey.currentState?.reset();
+    _questionController.clear();
+    _selectedType = null;
+    _controller
+        .clearImage(); // 👈 tu dois créer cette méthode dans QuestionController
+    setState(() {}); // Pour forcer la mise à jour visuelle
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,60 +133,116 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Question field
-              TextFormField(
-                controller: _questionController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une question.';
-                  }
-                 
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  labelText: 'Question',
-                  hintText: 'Entrez votre question',
-                  prefixIcon: Icon(Icons.question_answer, color: Colors.grey),
-                  border: OutlineInputBorder(),
-                  hintStyle: TextStyle(color: Colors.grey),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue, width: 1.0),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Container(
+                  padding: const EdgeInsets.only(left: 10, ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[100], // ou une autre couleur si souhaité
+                    borderRadius: BorderRadius.circular(6),
+                    border: BoxBorder.all(color: Colors.blue),
                   ),
-                  labelStyle: TextStyle(color: Colors.grey),
+                  // Question field
+                  child: TextFormField(
+                    controller: _questionController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer une question.';
+                      }
+
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 12.0,
+                      ),
+                      //labelText: '_',
+                      
+                      hintText: 'Entrez votre question',
+                      prefixIcon: Icon(
+                        Icons.question_answer,
+                        color: Colors.grey,
+                      ),
+                      border: InputBorder.none,
+                    
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Dropdown du type de question
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  labelText: 'Type de question',
-                  border: OutlineInputBorder(),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Container(
+                  padding: const EdgeInsets.only(left: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[100], // ou une autre couleur si souhaité
+                    borderRadius: BorderRadius.circular(6),
+                    border: BoxBorder.all(color: Colors.blue),
+                  ),
+                  // Dropdown du type de question
+                  child: DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 12.0,
+                      ),
+                      hintStyle: TextStyle(fontSize: 10),
+                      hintText: 'Type de question',
+                      border: InputBorder.none,
+                    ),
+                    value: _selectedType,
+                    items: _types.map((type) {
+                      return DropdownMenuItem<String>(
+                        value: type,
+                        child: Text(type),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedType = value;
+                      });
+                    },
+                    validator: (value) =>
+                        value == null ? 'Veuillez sélectionner un type.' : null,
+                  ),
                 ),
-                value: _selectedType,
-                items: _types.map((type) {
-                  return DropdownMenuItem<String>(
-                    value: type,
-                    child: Text(type),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedType = value;
-                  });
-                },
-                validator: (value) =>
-                    value == null ? 'Veuillez sélectionner un type.' : null,
               ),
-
               const SizedBox(height: 24),
 
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text("Soumettre"),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>((
+                      Set<MaterialState> states,
+                    ) {
+                      if (states.contains(MaterialState.pressed)) {
+                        return Colors.white70;
+                      }
+                      return Colors.blue;
+                    }),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      'Continuer',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  onPressed: () {
+                    _submitForm();
+                  },
+                ),
               ),
             ],
           ),

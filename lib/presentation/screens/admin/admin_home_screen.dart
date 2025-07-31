@@ -24,12 +24,24 @@ class AdminHomeScreen extends StatelessWidget {
               onTap: () => Navigator.pushNamed(context, '/validate'),
             ),
             ListTile(
+              title: Text("Bloquer utilistateur"),
+              onTap: () => Navigator.pushNamed(context, '/block_user'),
+            ),
+            ListTile(
+              title: Text("Debloquer utilistateur"),
+              onTap: () => Navigator.pushNamed(context, '/deblock_user'),
+            ),
+            ListTile(
               title: Text("Ajouter une question"),
               onTap: () => Navigator.pushNamed(context, '/put_question'),
             ),
             ListTile(
               title: Text("Ajouter une reponse"),
               onTap: () => Navigator.pushNamed(context, '/put_response'),
+            ),
+            ListTile(
+              title: Text("Ajouter un administrateur"),
+              onTap: () => Navigator.pushNamed(context, '/register_admin'),
             ),
             ListTile(
               title: Text("Déconnexion"),

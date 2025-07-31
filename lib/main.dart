@@ -4,6 +4,7 @@ import 'package:app_drive_v1_0/domain/usecases/login_user.dart';
 import 'package:app_drive_v1_0/domain/usecases/register_user.dart';
 import 'package:app_drive_v1_0/presentation/screens/login/login_controller.dart';
 import 'package:app_drive_v1_0/presentation/screens/register/register_controller.dart';
+import 'package:app_drive_v1_0/presentation/screens/register/register_admin_controller.dart';
 import 'package:app_drive_v1_0/core/services/storage_service.dart';
 import 'package:app_drive_v1_0/presentation/routes/app_router.dart';
 import 'package:app_drive_v1_0/injection/injection.dart';
@@ -30,6 +31,7 @@ void main() async {
 
   final loginController = LoginController(loginUseCase);
   final registerController = RegisterController(registerUseCase);
+  final registerAdminController = RegisterAdminController(registerUseCase);
 
  // Désactiver la rotation, forcer mode portrait uniquement
   await SystemChrome.setPreferredOrientations([
@@ -42,6 +44,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => loginController),
         ChangeNotifierProvider(create: (_) => registerController),
+        ChangeNotifierProvider(create: (_) => registerAdminController),
       ],
       child: MyApp(),
     ),
@@ -51,7 +54,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       title: 'App Drive',
       theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: false,),
       initialRoute: '/',

@@ -152,13 +152,6 @@ class TestController extends ChangeNotifier {
 
   // Envoie les résultats (ou navigation)
   void sendToResult(BuildContext context, int sc, List<Map<String, dynamic>> response ,List<Map<String, dynamic>> res ) {
-    print("================= RES");
-    print(res);
-    print("================= RESPONSE");
-    print(response);
-    print("================= SCORE");
-    print(sc);
-    // Navigator.pushNamed(context, '/result');
 
     Navigator.push(
     context,

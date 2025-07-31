@@ -1,10 +1,9 @@
-import 'dart:io';
-import 'package:app_drive_v1_0/presentation/screens/show_questions/show_questions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'edit_controller.dart';
 import 'package:app_drive_v1_0/core/services/globals.dart' as globals;
+import 'package:getwidget/getwidget.dart';
 
 class EditScreen extends StatefulWidget {
   final int id;
@@ -22,7 +21,10 @@ class _EditScreenState extends State<EditScreen> {
   void initState() {
     super.initState();
     // Crée ou récupère le controller en le taggant par l'id pour éviter conflits
-    controller = Get.put(EditController(id: widget.id), tag: widget.id.toString());
+    controller = Get.put(
+      EditController(id: widget.id),
+      tag: widget.id.toString(),
+    );
   }
 
   @override
@@ -64,7 +66,7 @@ class _EditScreenState extends State<EditScreen> {
             final responseCtrls = controller.responseCtrls[q.id]!;
 
             return Card(
-              color:const Color.fromARGB(255, 245, 248, 251),
+              //color: const Color.fromARGB(255, 245, 248, 251),
               elevation: 4,
               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               shape: RoundedRectangleBorder(
@@ -86,12 +88,17 @@ class _EditScreenState extends State<EditScreen> {
                                   ListTile(
                                     leading: const Icon(Icons.camera_alt),
                                     title: const Text('Prendre une photo'),
-                                    onTap: () => controller.pickImage(context, q.id),
+                                    onTap: () =>
+                                        controller.pickImage(context, q.id),
                                   ),
                                   ListTile(
                                     leading: const Icon(Icons.image),
                                     title: const Text('Depuis la galerie'),
-                                    onTap: () => controller.pickImage(context, q.id, fromGallery: true),
+                                    onTap: () => controller.pickImage(
+                                      context,
+                                      q.id,
+                                      fromGallery: true,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -100,14 +107,17 @@ class _EditScreenState extends State<EditScreen> {
                         );
                       },
 
-                       child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.blue, width: 2), // ✅ Bordure bleue
-                            borderRadius: BorderRadius.circular(6),
-                          ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.blue,
+                            width: 2,
+                          ), // ✅ Bordure bleue
+                          borderRadius: BorderRadius.circular(6),
+                        ),
                         child: Obx(() {
                           final file = controller.imageFiles[q.id];
-                          
+
                           return file != null
                               ? Image.file(
                                   file,
@@ -116,76 +126,89 @@ class _EditScreenState extends State<EditScreen> {
                                   fit: BoxFit.cover,
                                 )
                               : (q.img != null && q.img!.isNotEmpty
-                                  ? ClipRRect(
-                                      borderRadius: BorderRadius.circular(1),
-                                      child: Image.network(
-                                        '${globals.domaine}/images/questions/${q.img}',
-                                        height: 180,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) => const Icon(
-                                          Icons.image_not_supported,
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(4),
+                                        child: Image.network(
+                                          '${globals.domaine}/images/questions/${q.img}',
+                                          height: 180,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) =>
+                                              const Icon(
+                                                Icons.image_not_supported,
+                                              ),
                                         ),
-                                      ),
-                                    )
-                                  : Container(
-                                      height: 180,
-                                      color: Colors.grey[200],
-                                      child: const Center(
-                                        child: Icon(Icons.image, size: 60),
-                                      ),
-                                    ));
-                        
+                                      )
+                                    : Container(
+                                        height: 180,
+                                        color: Colors.grey[200],
+                                        child: const Center(
+                                          child: Icon(Icons.image, size: 60),
+                                        ),
+                                      ));
                         }),
-                       ),
+                      ),
                     ),
 
                     const SizedBox(height: 30),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Container(
+                        padding: const EdgeInsets.only(left: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200], // ou une autre couleur si souhaité
+                          borderRadius: BorderRadius.circular(6),
+                          //border: BoxBorder.all(color: Colors.blue),
+                        ),
 
-                    DropdownButtonFormField<String>(
-                      value: q.type,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Type de question',
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                            width: 1.0,
+                        child: DropdownButtonFormField<String>(
+                          value: q.type,
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 8.0,
+                              horizontal: 12.0,
+                            ),
+                            border: InputBorder.none,
                           ),
+                          items: _types.map((String type) {
+                            return DropdownMenuItem<String>(
+                              value: type,
+                              child: Text(type),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              q.type = value;
+                              controller.questions.refresh();
+                            }
+                          },
                         ),
                       ),
-                      items: _types.map((String type) {
-                        return DropdownMenuItem<String>(
-                          value: type,
-                          child: Text(type),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          q.type = value;
-                          controller.questions.refresh();
-                        }
-                      },
                     ),
 
                     const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Container(
+                        padding: const EdgeInsets.only(left: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200], // ou une autre couleur si souhaité
+                          borderRadius: BorderRadius.circular(6),
+                          //border: BoxBorder.all(color: Colors.blue),
+                        ),
 
-                    TextFormField(
-                      controller: questionCtrl,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                        labelText: 'Question',
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.blue,
-                            width: 1.0,
+                        child: TextFormField(
+                          controller: questionCtrl,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 8.0,
+                              horizontal: 12.0,
+                            ),
+                            border: InputBorder.none,
                           ),
+                          maxLines: null,
                         ),
                       ),
-                      maxLines: null,
-                      
                     ),
 
                     const SizedBox(height: 30),
@@ -196,57 +219,67 @@ class _EditScreenState extends State<EditScreen> {
                       itemCount: q.response.length,
                       itemBuilder: (context, i) {
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  controller: responseCtrls[i],
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                                    labelText: 'Réponse ${i + 1}',
-                                    border: const OutlineInputBorder(),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.blue,
-                                        width: 1.0,
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Container(
+                            padding: const EdgeInsets.only(left: 20),
+                            decoration: BoxDecoration(
+                              color:  Colors.grey[200], // ou une autre couleur si souhaité
+                              borderRadius: BorderRadius.circular(6),
+                              //border: BoxBorder.all(color: Colors.blue),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: responseCtrls[i],
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.symmetric(
+                                        vertical: 8.0,
+                                        horizontal: 12.0,
                                       ),
+                                      border: InputBorder.none,
                                     ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                               Transform.scale(
-                                    scale: 1,
-                                    
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.blue, width: 1),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Transform.scale(
-                                        scale: 1.5,
-                                        child: Transform.scale(
-                                          scale: 1.5,
-                                          child: Checkbox(
-                                            value: q.state[i],
-                                            shape: const RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.all(Radius.circular(10.0))
-                                            ),
-                                            onChanged: (value) {
-                                              q.state[i] = value ?? false;
-                                              controller.questions.refresh();
-                                            },
-                                             checkColor: Colors.transparent,
-                                            activeColor: Colors.blue,
-                                          ),
+                                SizedBox(width: 16),
+                                Transform.scale(
+                                  scale: 1.3,
+                                  child: Theme(
+                                    data: Theme.of(context).copyWith(
+                                      unselectedWidgetColor: Colors.blue,
+                                      checkboxTheme: CheckboxThemeData(
+                                        shape: CircleBorder(),
+                                        side: BorderSide(
+                                          color: Colors.blue,
+                                          width: 1,
+                                        ),
+                                        fillColor:
+                                            MaterialStateProperty.resolveWith<
+                                              Color
+                                            >((states) {
+                                              if (states.contains(
+                                                MaterialState.selected,
+                                              )) {
+                                                return Colors.blue;
+                                              }
+                                              return Colors.transparent;
+                                            }),
+                                        checkColor: MaterialStateProperty.all(
+                                          Colors.transparent,
                                         ),
                                       ),
                                     ),
+                                    child: Checkbox(
+                                      value: q.state[i],
+                                      onChanged: (value) {
+                                        q.state[i] = value ?? false;
+                                        controller.questions.refresh();
+                                      },
+                                    ),
                                   ),
-
-                             
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -263,7 +296,7 @@ class _EditScreenState extends State<EditScreen> {
                           final success = await controller.saveQuestion(q);
 
                           if (success == true) {
-                           Navigator.pop(context, true);
+                            Navigator.pop(context, true);
                           }
                         },
                       ),

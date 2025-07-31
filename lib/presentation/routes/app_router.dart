@@ -1,11 +1,14 @@
 // lib/presentation/routes/app_router.dart
 
+import 'package:app_drive_v1_0/presentation/screens/deblock/deblock_user_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app_drive_v1_0/data/datasources/auth_api.dart';
 import 'package:app_drive_v1_0/presentation/screens/login/login_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/validate/validate_screen.dart';
+import 'package:app_drive_v1_0/presentation/screens/block/block_user_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/denied/denied_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/register/register_screen.dart';
+import 'package:app_drive_v1_0/presentation/screens/register/register_admin_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/register/register_success_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/admin/admin_home_screen.dart';
 import 'package:app_drive_v1_0/presentation/screens/user/user_home_screen.dart';
@@ -24,7 +27,7 @@ class AppRouter {
 
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(builder: (_) => const LoginScreen());
+        return MaterialPageRoute(builder: (_) =>  LoginScreen());
 
       case '/register':
         return MaterialPageRoute(builder: (_) => const RegisterScreen());
@@ -37,7 +40,7 @@ class AppRouter {
 
 
       case '/test_user':
-        if (authApi.isAdmin == false  && authApi.currentUser?.accepted == true ) {
+        if (authApi.isAdmin == false  && authApi.currentUser?.accepted == true && authApi.currentUser?.block == null) {
           return MaterialPageRoute(builder: (_) => TestScreen());
         } else {
           return MaterialPageRoute(
@@ -46,7 +49,7 @@ class AppRouter {
         }
 
       case '/user':
-        if (authApi.isAdmin == false  && authApi.currentUser?.accepted == true ) {
+        if (authApi.isAdmin == false  && authApi.currentUser?.accepted == true && authApi.currentUser?.block == null ) {
           return MaterialPageRoute(builder: (_) => UserHomeScreen());
         } else {
           return MaterialPageRoute(
@@ -57,6 +60,14 @@ class AppRouter {
       case '/show_questions':
         if (authApi.isAdmin) {
           return MaterialPageRoute(builder: (_) => ShowQuestionsScreen());
+        } else {
+          return MaterialPageRoute(
+            builder: (_) => const DeniedScreen(),
+          );
+        }
+      case '/register_admin':
+        if (authApi.isAdmin) {
+          return MaterialPageRoute(builder: (_) => RegisterAdminScreen());
         } else {
           return MaterialPageRoute(
             builder: (_) => const DeniedScreen(),
@@ -76,6 +87,24 @@ class AppRouter {
       case '/validate':
         if (authApi.isAdmin) {
           return MaterialPageRoute(builder: (_) =>  ValidateScreen());
+        } else {
+          return MaterialPageRoute(
+            builder: (_) => const DeniedScreen(),
+          );
+        }
+
+      case '/block_user':
+        if (authApi.isAdmin) {
+          return MaterialPageRoute(builder: (_) =>  BlockUserScreen());
+        } else {
+          return MaterialPageRoute(
+            builder: (_) => const DeniedScreen(),
+          );
+        }
+
+      case '/deblock_user':
+        if (authApi.isAdmin) {
+          return MaterialPageRoute(builder: (_) =>  DeblockUserScreen());
         } else {
           return MaterialPageRoute(
             builder: (_) => const DeniedScreen(),

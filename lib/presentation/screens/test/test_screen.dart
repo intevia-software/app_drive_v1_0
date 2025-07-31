@@ -70,8 +70,8 @@ class _TestScreenState extends State<TestScreen> {
                       
                       padding: EdgeInsets.only(left: 16, top: 10, bottom: 10),
                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(20), // arrondit les coins
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(6), // arrondit les coins
                         ),
                       
                       child: Row(
@@ -81,8 +81,9 @@ class _TestScreenState extends State<TestScreen> {
                             child: Text(
                               result['question'] ?? '',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontWeight: FontWeight.bold,
+                                fontSize: 18,
                               ),
                             ),
                           ),
@@ -93,7 +94,7 @@ class _TestScreenState extends State<TestScreen> {
                                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
                                     color: Colors.blue, // ou toute autre couleur de fond
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
                                     '${controller.counter}/${controller.seconde}',
@@ -122,7 +123,7 @@ class _TestScreenState extends State<TestScreen> {
                             padding: const EdgeInsets.only(left: 20),
                             decoration: BoxDecoration(
                               color: Colors.grey[200], // ou une autre couleur si souhaité
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(6),
                             ),
                             child: Row(
                               children: [
@@ -130,7 +131,7 @@ class _TestScreenState extends State<TestScreen> {
                                   flex: 3,
                                   child: Text(
                                     responseText,
-                                    style: TextStyle(color: Colors.black),
+                                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold,),
                                   ),
                                 ),
                                 SizedBox(width: 16),
@@ -141,7 +142,7 @@ class _TestScreenState extends State<TestScreen> {
                                   unselectedWidgetColor: Colors.blue,
                                   checkboxTheme: CheckboxThemeData(
                                     shape: CircleBorder(),
-                                    side: BorderSide(color: Colors.blue, width: 2),
+                                    side: BorderSide(color: Colors.blue, width: 1),
                                     fillColor: MaterialStateProperty.resolveWith<Color>((states) {
                                       if (states.contains(MaterialState.selected)) {
                                         return Colors.blue;
@@ -205,21 +206,6 @@ class _TestScreenState extends State<TestScreen> {
                         ),
                       ),
                     ),
-                    // ElevatedButton(
-                    //   onPressed: () { controller.handleValid(context);
-                    //   }
-                    //    child: const Padding(
-                    //       padding: EdgeInsets.all(10.0),
-                    //       child: Text(
-                    //         ' Se connecter',
-                    //         style: TextStyle(
-                    //           fontSize: 16,
-                    //           fontWeight: FontWeight.bold,
-                    //           color: Colors.white,
-                    //         ),
-                    //       ),
-                    //     ),
-                    // ),
                   ],
                 ),
               ),
