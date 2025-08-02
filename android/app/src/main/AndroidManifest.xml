@@ -1,12 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="app_drive_v1_0"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="false"
+        
+        >
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -27,6 +30,20 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Si tu utilises une URL web (app link) -->
+                <data
+                android:scheme="https"
+                android:host="driving.ovh"
+                android:pathPrefix="/reset-password" />
+                <!-- OU si tu veux un schéma personnalisé -->
+                <!--
+    <data android:scheme="myapp" android:host="reset-password" />
+    -->
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

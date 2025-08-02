@@ -12,6 +12,10 @@ import 'package:provider/provider.dart';
 import 'data/datasources/auth_api.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
+import 'package:uni_links/uni_links.dart';
+import 'dart:async';
+
+
 
 
 void main() async {
@@ -51,7 +55,44 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  StreamSubscription? _sub;
+
+  @override
+  void initState() {
+    super.initState();
+    _handleIncomingLinks();
+  }
+
+  void _handleIncomingLinks() {
+    _sub = uriLinkStream.listen((Uri? uri) {
+      if (uri != null) {
+        print('Lien reçu : $uri');
+        // Exemple : myapp://reset-password
+        if (uri.path == "/reset-password") {
+          // Redirige vers l'écran de réinitialisation
+        }
+      }
+    }, onError: (err) {
+      print("Erreur de lien : $err");
+    });
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

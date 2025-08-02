@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'login_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:getwidget/getwidget.dart';
-
+import 'package:app_drive_v1_0/core/services/globals.dart' as globals;
+import 'package:app_drive_v1_0/presentation/screens/password/password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -46,6 +46,14 @@ class _LoginScreen extends State<LoginScreen> {
     }
 
     // Appelle ton controller.login ici...
+  }
+
+  void _launchURL() {
+    final url = Uri.parse('${globals.domaine}/reset-password');
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ResetPasswordWebPage(url: url)),
+    );
   }
 
   @override
@@ -117,7 +125,10 @@ class _LoginScreen extends State<LoginScreen> {
                         return null;
                       },
                       decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 12.0,
+                        ),
                         labelText: 'Email',
                         prefixIcon: Icon(
                           Icons.email_outlined,
@@ -150,7 +161,10 @@ class _LoginScreen extends State<LoginScreen> {
                       },
                       obscureText: !_isPasswordVisible,
                       decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: 12.0,
+                        ),
                         labelText: 'Mot de passe',
                         hintText: 'Entrez votre mot de passe',
                         prefixIcon: const Icon(
@@ -247,6 +261,10 @@ class _LoginScreen extends State<LoginScreen> {
                           ),
                         ),
                       ),
+                    ),
+                    TextButton(
+                      onPressed: _launchURL,
+                      child: Text('Mot de passe oublier?'),
                     ),
 
                     _gap(),
